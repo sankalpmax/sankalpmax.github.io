@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sankalp Arava | Cloud Infrastructure, AWS, Linux, Terraform</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+:root{--bg:#f2f5f3;--surface:#fff;--ink:#16302b;--muted:#4a625c;--line:#cbd8d3;--accent:#0f766e;--accent-ink:#0b5a54;--warn:#9a4d00;--warn-bg:#fdf0e0;--ok-bg:#dff3ee;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0f1c19;--surface:#162825;--ink:#e6efec;--muted:#a1b8b1;--line:#2b423d;--accent:#3cc2b5;--accent-ink:#5fd6ca;--warn:#f0b36a;--warn-bg:#3a2a14;--ok-bg:#123a35}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0f1c19;--surface:#162825;--ink:#e6efec;--muted:#a1b8b1;--line:#2b423d;--accent:#3cc2b5;--accent-ink:#5fd6ca;--warn:#f0b36a;--warn-bg:#3a2a14;--ok-bg:#123a35}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.0625rem/1.65 "Source Sans 3",system-ui,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.15;margin:0}
+a{color:var(--accent-ink)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.wrap{max-width:62rem;margin:0 auto;padding:0 1.25rem}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:3.5rem}
+.logo{font:700 1.15rem Fraunces,serif;text-decoration:none;color:var(--ink)}
+nav{display:flex;gap:.2rem;overflow-x:auto}
+nav a{text-decoration:none;color:var(--muted);padding:.4rem .65rem;border-radius:.4rem;white-space:nowrap;font-size:.95rem}
+nav a:hover{background:var(--surface);color:var(--ink)}
+.hero{padding:4.5rem 0 3.5rem}
+.hero h1{font-size:clamp(2.6rem,9vw,5.5rem);letter-spacing:-.02em}
+.hero .sub{font-size:1.2rem;font-weight:600;color:var(--accent-ink);margin:.9rem 0 1rem}
+.hero p{max-width:38rem;color:var(--muted);margin:0 0 1.6rem;font-size:1.15rem}
+.btn{display:inline-block;text-decoration:none;font-weight:600;padding:.65rem 1.15rem;border-radius:.45rem;background:var(--accent);color:#fff;border:2px solid var(--accent);margin:0 .5rem .5rem 0}
+:root[data-theme="dark"] .btn{color:#06201c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn{color:#06201c}}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+section{padding:3.5rem 0;border-top:1px solid var(--line)}
+h2{font-size:clamp(1.7rem,4.5vw,2.4rem);margin-bottom:1.25rem}
+.lead{max-width:42rem;margin:0 0 1rem}
+.path{list-style:none;margin:1.5rem 0 0;padding:0;display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr))}
+.path li{border-left:3px solid var(--accent);padding:.2rem 0 .2rem 1rem}
+.path b{display:block;font:700 1.05rem Fraunces,serif}
+.path span{color:var(--muted);font-size:.95rem}
+.note{color:var(--muted);font-size:.95rem;max-width:42rem}
+.exp{max-width:44rem;padding-left:1.2rem}
+.exp li{margin-bottom:.5rem}
+dl{display:grid;grid-template-columns:minmax(11rem,15rem) 1fr;margin:0;border-top:1px solid var(--line)}
+dt,dd{margin:0;padding:.8rem 0;border-bottom:1px solid var(--line)}
+dt{font-weight:600}
+dd{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:.75rem;padding:1.5rem}
+.card h3{font-size:1.45rem;margin-bottom:.75rem}
+.links{display:flex;flex-wrap:wrap;gap:.5rem 1.25rem;margin:1.25rem 0 0}
+.links a{font-weight:600}
+h3.sub3{font-size:1.15rem;margin:1.75rem 0 .6rem}
+ol.flow{margin:0;padding-left:1.3rem;max-width:42rem}
+ol.flow li{margin-bottom:.35rem}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:.6rem;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:34rem;font-size:.97rem}
+th,td{text-align:left;padding:.7rem .9rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;background:var(--bg)}
+tr:last-child td{border-bottom:0}
+.tag{display:inline-block;font-size:.85rem;font-weight:600;padding:.1rem .55rem;border-radius:999px;background:var(--ok-bg);color:var(--accent-ink);white-space:nowrap}
+.tag.warn{background:var(--warn-bg);color:var(--warn)}
+.disclaimer{border-left:4px solid var(--warn);background:var(--warn-bg);padding:.8rem 1rem;border-radius:0 .5rem .5rem 0;max-width:44rem;margin:0 0 1.5rem}
+.dia{overflow-x:auto;border:1px solid var(--line);border-radius:.6rem;background:var(--bg);margin:.75rem 0}
+.dia svg{display:block;width:100%;min-width:820px;height:auto;font-family:"Source Sans 3",system-ui,sans-serif}
+.dia .lane{fill:var(--surface);stroke:var(--line)}
+.dia .ln{font-weight:700;font-size:14px;fill:var(--muted)}
+.dia .b,.dia .x,.dia .t{fill:var(--surface);stroke-width:2}
+.dia .b{stroke:var(--accent)}
+.dia .x{stroke:var(--warn)}
+.dia .t{stroke:var(--warn);stroke-dasharray:6 4;fill:transparent}
+.dia .h{font-weight:700;font-size:14px;fill:var(--ink);text-anchor:middle}
+.dia .s{font-size:12px;fill:var(--accent-ink);text-anchor:middle;font-weight:600}
+.dia .w{fill:var(--warn)}
+.dia .n{font-size:12px;fill:var(--muted)}
+.dia .ln2{stroke:var(--muted);stroke-width:2;fill:none}
+.dia .ar{fill:var(--muted)}
+.key{display:flex;flex-wrap:wrap;gap:.5rem 1.25rem;font-size:.92rem;color:var(--muted);margin:0 0 1rem}
+.key i{display:inline-block;width:1.1rem;height:.8rem;border:2px solid var(--accent);border-radius:3px;vertical-align:-1px;margin-right:.35rem}
+.key i.x{border-color:var(--warn)}
+.key i.t{border-color:var(--warn);border-style:dashed}
+details{border:1px solid var(--line);border-radius:.5rem;background:var(--surface);margin:0 0 .6rem;max-width:44rem}
+summary{cursor:pointer;font-weight:600;padding:.7rem 1rem}
+details p,details ul{margin:0;padding:0 1rem .9rem;color:var(--muted)}
+details ul{padding-left:2.2rem}
+.badge{display:flex;align-items:center;gap:1rem;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:.75rem;padding:1.1rem 1.25rem;max-width:34rem}
+.badge:hover{border-color:var(--accent)}
+.badge .seal{flex:none;width:3.25rem;height:3.25rem;border-radius:50%;background:var(--ok-bg);color:var(--accent-ink);display:grid;place-items:center;font:700 1.1rem Fraunces,serif}
+.badge b{display:block;font:700 1.1rem Fraunces,serif;line-height:1.25}
+.badge span.m{display:block;color:var(--muted);font-size:.95rem}
+.badge u{color:var(--accent-ink);font-weight:600;font-size:.95rem}
+.clist{list-style:none;margin:0 0 1.25rem;padding:0;max-width:34rem}
+.clist li{padding:.5rem 0;border-bottom:1px solid var(--line)}
+.role{font:700 clamp(1.3rem,4vw,2rem) Fraunces,Georgia,serif;margin:.9rem 0 .4rem;min-height:2.4rem;color:var(--ink)}
+.role .pre{color:var(--muted);font-weight:600}
+.role .w{color:var(--accent-ink)}
+.caret{display:inline-block;width:3px;height:1.1em;background:var(--accent);margin-left:3px;vertical-align:-.15em;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.caret{animation:none}}
+.cl{display:grid;gap:1.25rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,19rem),1fr));margin:1.25rem 0}
+.cl .card{padding:1.25rem}
+.cl .card h3{font-size:1.2rem;margin-bottom:.25rem}
+.cl ul{margin:.6rem 0 0;padding-left:1.1rem}
+.cl li{margin-bottom:.4rem}
+.meta{color:var(--muted);margin:0;font-size:.95rem}
+footer{padding:2rem 0;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
+@media (max-width:40rem){dl{grid-template-columns:1fr}dt{border:0;padding-bottom:0}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<a class="logo" href="#top">Sankalp Arava</a>
+<nav aria-label="Sections"><a href="#about">About</a><a href="#experience">Experience</a><a href="#skills">Skills</a><a href="#projects">Projects</a><a href="#certs">Certifications</a><a href="#contact">Contact</a></nav>
+</div></header>
+
+<main id="top">
+<div class="wrap hero">
+<h1>Sankalp Arava</h1>
+<div class="role"><span class="pre">Growing into </span><span class="w" id="typed">Cloud Engineer and DevOps Engineer</span><span class="caret" aria-hidden="true"></span></div>
+<div class="sub">Cloud Infrastructure | AWS | Linux | Terraform | CI/CD</div>
+<p>I bring hands-on cloud operations and troubleshooting experience, and I’m building deeper infrastructure automation skills through my personal FoodDash project.</p>
+<a class="btn" href="#projects">See the FoodDash project</a>
+<a class="btn ghost" href="https://www.linkedin.com/in/sankalp-arava-152080170/" target="_blank" rel="noopener">LinkedIn</a>
+</div>
+
+<section id="about"><div class="wrap">
+<h2>About</h2>
+<p class="lead">I started in technical support, moved into Linux and system administration, and now work in cloud infrastructure support. My direction is Cloud and DevOps engineering. I have around 2.7 years of total IT experience.</p>
+<p class="lead">My professional experience is in operations: AWS and infrastructure support, monitoring, incident investigation, release validation, and troubleshooting. FoodDash is a separate personal project where I practice Terraform, containers, and CI/CD.</p>
+<ol class="path" aria-label="Career progression">
+<li><b>Technical support</b><span>Where I started</span></li>
+<li><b>Linux and system administration</b><span>Server operations</span></li>
+<li><b>Cloud infrastructure support</b><span>AWS operations</span></li>
+<li><b>Cloud and DevOps direction</b><span>Where I’m heading</span></li>
+</ol>
+</div></section>
+
+<section id="experience"><div class="wrap">
+<h2>Experience</h2>
+<h3>Associate Cloud Engineer, CloudifyOps</h3>
+<p class="meta">Jun 2025 – Aug 2026 · Bangalore, India · On-site</p>
+<p class="lead">I supported AWS production infrastructure for enterprise clients in FinTech and AdTech, across three client engagements.</p>
+<div class="cl">
+<article class="card"><h3>Yubi (FinTech, SRE)</h3><p class="meta">Jun 2025 – Jan 2026</p>
+<ul>
+<li>Operated an AWS-hosted FinTech production platform through co-lending release cycles, handling incident response and RCA</li>
+<li>Wrote Python scripts for log analysis and error-pattern detection to shorten investigations</li>
+<li>Managed Jenkins CI/CD pipelines, including Jenkinsfile automation and pre- and post-deployment validation</li>
+<li>Monitored APIs with New Relic and traced call flows in Postman to isolate production failures</li>
+<li>Handled alerts and deployment coordination across environments, working with engineering teams during incidents and releases</li>
+</ul></article>
+<article class="card"><h3>Jivox and Ikano (AdTech)</h3><p class="meta">Jan 2026 – May 2026</p>
+<ul>
+<li>Managed AWS EC2-hosted production infrastructure for the Jivox ad server and Ikano, working to keep availability high and meet SLAs</li>
+<li>Worked with EC2, VPC, RDS, ALB, Auto Scaling, and CloudWatch</li>
+<li>Managed Jenkins CI/CD pipelines, with deployment validation and pre- and post-deployment health checks</li>
+<li>Diagnosed and resolved HTTP 4XX and 5XX errors and infrastructure alerts using structured root cause analysis</li>
+</ul></article>
+<article class="card"><h3>Credit Saison (FinTech)</h3><p class="meta">May 2026 – Aug 2026</p>
+<ul>
+<li>Maintained AWS production infrastructure for a lending platform, including RDS Aurora clusters and EC2-hosted microservices</li>
+<li>Built weekly RDS Performance Insights reports covering CPU utilization, database load, and top SQL queries</li>
+<li>Automated AWS Athena SQL queries for Salesgate metric reporting and AngelOne data validation, replacing manual workflows</li>
+<li>Validated CKYC pipeline runs through Slack bot monitoring, and end-of-day batch pipelines through SQL checks in DBeaver</li>
+<li>Troubleshot production issues and carried out incident analysis and RCA</li>
+</ul></article>
+</div>
+<h3 class="sub3">Across all three engagements</h3>
+<ul class="exp">
+<li>Monitored infrastructure health and application performance with Datadog APM, New Relic, and CloudWatch</li>
+<li>Worked with development teams on infrastructure requirements and deployments</li>
+<li>Maintained documentation for infrastructure components and incident runbooks</li>
+<li>Took part in an on-call rotation for 24/7 production support</li>
+</ul>
+<h3 class="sub3">Upskilling</h3>
+<p class="meta">Sep 2026 – Oct 2026</p>
+<p class="lead">I took a planned period to build deeper cloud and DevOps skills after my CloudifyOps engagements.</p>
+<p class="note">Technologies: AWS (EC2, VPC, RDS, S3, CloudWatch), Datadog, New Relic, Jenkins, Linux, Bash. Full history on my <a href="https://www.linkedin.com/in/sankalp-arava-152080170/" target="_blank" rel="noopener">LinkedIn profile</a>.</p>
+</div></section>
+
+<section id="skills"><div class="wrap">
+<h2>Skills</h2>
+<dl>
+<dt>Cloud and infrastructure</dt><dd>AWS: EC2, VPC, RDS (including Aurora), ALB, Auto Scaling, S3, CloudWatch, Athena, ECR, and Systems Manager</dd>
+<dt>Systems and operations</dt><dd>Linux, Bash, Python scripting, monitoring with Datadog APM, New Relic, and CloudWatch, incident response and RCA</dd>
+<dt>Automation and delivery</dt><dd>Terraform, Git, GitHub Actions, Docker, Docker Compose, Amazon ECR, Jenkins, AWS Systems Manager</dd>
+</dl>
+</div></section>
+
+<section id="projects"><div class="wrap">
+<h2>Projects</h2>
+<article class="card">
+<h3>FoodDash: Personal AWS, Terraform &amp; CI/CD Learning Project</h3>
+<p class="disclaimer">FoodDash is a personal learning and demonstration project. It is not commercial or customer production infrastructure.</p>
+<p class="lead">FoodDash is a sample food-ordering application. The application and its infrastructure live in two separate repositories. The application repository has a frontend plus user, restaurant, and order services. The infrastructure repository holds the Terraform.</p>
+
+<h3 class="sub3">How a code change reaches AWS</h3>
+<p class="lead">The diagram follows an application change from commit to a running container, and shows how Terraform manages the AWS resources separately. Each box says whether it is in source, seen in my last audit, or still a target design.</p>
+<div class="dia">
+<svg viewBox="0 0 960 590" role="img" aria-labelledby="dt dd">
+<title id="dt">FoodDash delivery and infrastructure diagram</title>
+<desc id="dd">Three lanes. Application delivery: developer change, GitHub Actions build, Trivy scan, Amazon ECR, SSM deploy, health check. Infrastructure management: Terraform source, plan and apply, AWS resources. Runtime in AWS: visitor, CloudFront, ALB, EC2 containers, RDS, with target design components shown dashed.</desc>
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="ar"/></marker></defs>
+<rect class="lane" x="8" y="8" width="944" height="132" rx="10"/><text class="ln" x="25" y="30">Application delivery (GitHub Actions)</text>
+<rect class="lane" x="8" y="165" width="944" height="140" rx="10"/><text class="ln" x="25" y="187">Infrastructure management (Terraform)</text>
+<rect class="lane" x="8" y="322" width="944" height="252" rx="10"/><text class="ln" x="25" y="344">Runtime in AWS</text>
+
+<g class="b"><rect class="b" x="25" y="45" width="135" height="84" rx="8"/></g>
+<text class="h" x="92.5" y="67">Developer</text><text class="h" x="92.5" y="85">change</text><text class="s" x="92.5" y="115">In source</text>
+<rect class="b" x="180" y="45" width="135" height="84" rx="8"/>
+<text class="h" x="247.5" y="67">GitHub Actions</text><text class="h" x="247.5" y="85">build images</text><text class="s" x="247.5" y="115">In source</text>
+<rect class="b" x="335" y="45" width="135" height="84" rx="8"/>
+<text class="h" x="402.5" y="67">Trivy scan</text><text class="h" x="402.5" y="85">non-blocking</text><text class="s" x="402.5" y="115">In source</text>
+<rect class="b" x="490" y="45" width="135" height="84" rx="8"/>
+<text class="h" x="557.5" y="67">Amazon ECR</text><text class="h" x="557.5" y="85">image registry</text><text class="s" x="557.5" y="115">In source</text>
+<rect class="b" x="645" y="45" width="135" height="84" rx="8"/>
+<text class="h" x="712.5" y="67">SSM deploy</text><text class="h" x="712.5" y="85">to AWS sandbox</text><text class="s" x="712.5" y="115">Run succeeded</text>
+<rect class="b" x="800" y="45" width="135" height="84" rx="8"/>
+<text class="h" x="867.5" y="67">Health check</text><text class="h" x="867.5" y="85">after deploy</text><text class="s" x="867.5" y="115">Passed in a run</text>
+<g class="ln2" marker-end="url(#ar)"></g>
+<path class="ln2" d="M162 87H178" marker-end="url(#ar)"/><path class="ln2" d="M317 87H333" marker-end="url(#ar)"/><path class="ln2" d="M472 87H488" marker-end="url(#ar)"/><path class="ln2" d="M627 87H643" marker-end="url(#ar)"/><path class="ln2" d="M782 87H798" marker-end="url(#ar)"/>
+
+<rect class="b" x="25" y="202" width="135" height="84" rx="8"/>
+<text class="h" x="92.5" y="224">Terraform</text><text class="h" x="92.5" y="242">source</text><text class="s" x="92.5" y="272">In source</text>
+<rect class="b" x="180" y="202" width="135" height="84" rx="8"/>
+<text class="h" x="247.5" y="224">Plan and apply</text><text class="h" x="247.5" y="242">S3 state (Mumbai)</text><text class="s" x="247.5" y="272">In source</text>
+<rect class="x" x="335" y="202" width="135" height="84" rx="8"/>
+<text class="h" x="402.5" y="224">AWS resources</text><text class="h" x="402.5" y="242">partly reconciled</text><text class="s w" x="402.5" y="272">Open audit items</text>
+<path class="ln2" d="M162 244H178" marker-end="url(#ar)"/><path class="ln2" d="M317 244H333" marker-end="url(#ar)"/>
+<text class="n" x="490" y="224">Separate path:</text><text class="n" x="490" y="241">the app workflow does</text><text class="n" x="490" y="258">not apply Terraform.</text>
+
+<rect class="b" x="25" y="359" width="135" height="84" rx="8"/>
+<text class="h" x="92.5" y="391">Visitor</text><text class="h" x="92.5" y="409">browser</text>
+<rect class="x" x="180" y="359" width="135" height="84" rx="8"/>
+<text class="h" x="247.5" y="381">CloudFront</text><text class="h" x="247.5" y="399">demo URL</text><text class="s w" x="247.5" y="429">Origin to verify</text>
+<rect class="x" x="335" y="359" width="135" height="84" rx="8"/>
+<text class="h" x="402.5" y="381">ALB</text><text class="h" x="402.5" y="399">target groups</text><text class="s w" x="402.5" y="429">To verify</text>
+<rect class="b" x="645" y="359" width="135" height="84" rx="8"/>
+<text class="h" x="712.5" y="381">EC2 containers</text><text class="h" x="712.5" y="399">in Auto Scaling</text><text class="s" x="712.5" y="429">Audit: 1 instance</text>
+<rect class="b" x="800" y="359" width="135" height="84" rx="8"/>
+<text class="h" x="867.5" y="381">RDS</text><text class="h" x="867.5" y="399">database</text><text class="s" x="867.5" y="429">Audit: stopped</text>
+<path class="ln2" d="M162 401H178" marker-end="url(#ar)"/><path class="ln2" d="M317 401H333" marker-end="url(#ar)"/><path class="ln2" d="M472 401H643" marker-end="url(#ar)"/><path class="ln2" d="M782 401H798" marker-end="url(#ar)"/>
+<text class="n" x="558" y="393" text-anchor="middle">target group</text>
+<path class="ln2" d="M712 131V357" marker-end="url(#ar)"/><text class="n" x="722" y="316">deploys containers</text>
+<path class="ln2" stroke-dasharray="4 4" d="M402 288V357" marker-end="url(#ar)"/><text class="n" x="412" y="316">provisions</text>
+
+<rect class="t" x="180" y="480" width="135" height="70" rx="8"/>
+<text class="h" x="247.5" y="506">S3 static origin</text><text class="s w" x="247.5" y="536">Target design</text>
+<rect class="t" x="645" y="480" width="135" height="70" rx="8"/>
+<text class="h" x="712.5" y="500">Second EC2</text><text class="h" x="712.5" y="517">web server</text><text class="s w" x="712.5" y="538">Target design</text>
+<rect class="t" x="800" y="480" width="135" height="70" rx="8"/>
+<text class="h" x="867.5" y="506">Read replica</text><text class="s w" x="867.5" y="536">Target design</text>
+</svg>
+</div>
+<p class="key"><span><i></i>In source or seen in audit</span><span><i class="x"></i>Experimental or still to verify</span><span><i class="t"></i>Target design, not confirmed as deployed</span></p>
+<p class="note">Earlier runs failed deployment health checks, and a later run completed successfully. The troubleshooting log below links each run.</p>
+
+<h3 class="sub3">CI/CD case study: from commit to a checked deployment</h3>
+<p class="lead"><b>The problem:</b> building four services by hand and updating containers on EC2 is slow and easy to get wrong, and it leaves no record of which version is running. The workflow replaces that with one repeatable path. It builds each component, tags it with the commit, scans and publishes it, then deploys and checks it.</p>
+<h3 class="sub3">Continuous integration</h3>
+<div class="tbl"><table>
+<thead><tr><th>Layer</th><th>Problem it addresses</th><th>How it works</th></tr></thead>
+<tbody>
+<tr><td>Triggers</td><td>Avoid running for unrelated changes, and allow manual runs</td><td>Manual start, or pushes to <code>feature/docker-cicd-1</code> that touch the service or frontend directories</td></tr>
+<tr><td>Parallel builds</td><td>A repeatable, isolated build for each component</td><td>Four jobs on hosted Ubuntu runners: user, restaurant, order, and frontend</td></tr>
+<tr><td>AWS access</td><td>Push to the registry without credentials in the YAML</td><td>AWS keys and region come from GitHub Secrets, and each job logs in to ECR. These are stored access keys, not OIDC</td></tr>
+<tr><td>Traceable images</td><td>Know exactly which version is deployed</td><td>Each image is built from its own Dockerfile, tagged with the commit SHA, and pushed to its own ECR path</td></tr>
+<tr><td>Image scan</td><td>See vulnerabilities before deploying</td><td>Trivy scans for HIGH and CRITICAL findings. It uses <code>exit-code: 0</code>, so it is informational and does not block</td></tr>
+<tr><td>Deploy gate</td><td>Never deploy while images are missing</td><td>The deploy job waits for all four build jobs to succeed</td></tr>
+</tbody></table></div>
+<h3 class="sub3">Continuous deployment</h3>
+<div class="tbl"><table>
+<thead><tr><th>Layer</th><th>Problem it addresses</th><th>How it works</th></tr></thead>
+<tbody>
+<tr><td>Deploy without SSH</td><td>A managed way to run commands on the server</td><td><code>scripts/deploy.sh</code> uses AWS Systems Manager Run Command. It finds a healthy, SSM-online instance in the <code>fooddash-asg</code> Auto Scaling group and retries if none is ready</td></tr>
+<tr><td>Consistent versions</td><td>No doubt about what is running</td><td>The script pulls all four images using the same commit tag that the build produced</td></tr>
+<tr><td>Runtime configuration</td><td>No secrets in the repository</td><td>Database and JWT settings come from AWS Secrets Manager. A temporary payload is created for the command and deleted afterwards</td></tr>
+<tr><td>Container replacement</td><td>Manual stop, pull, and restart steps</td><td>Old containers are stopped and removed, new images are pulled, and the frontend and backend start with restart-unless-stopped</td></tr>
+<tr><td>Verification</td><td>“Command sent” is not proof that it worked</td><td>The script polls the SSM command status and retries HTTP checks on the backend health endpoints and the frontend. It prints the output and fails on error or timeout</td></tr>
+</tbody></table></div>
+<p class="note">Terraform for the supporting infrastructure lives in the separate <code>fooddash-infra</code> repository. This workflow does not apply it.</p>
+<h3 class="sub3">Troubleshooting log</h3>
+<p class="lead">Several runs built and pushed images without trouble, then failed at the deployment health check. The deploy script exits with an error when a check fails, so a green run means the checks passed.</p>
+<div class="tbl"><table>
+<thead><tr><th>Run</th><th>What the logs show</th></tr></thead>
+<tbody>
+<tr><td><a href="https://github.com/sankalpmax/fooddash/actions/runs/42018837539" target="_blank" rel="noopener">Failed run</a></td><td>SSM deployment ran, but the health check for the user service on port 3001 failed</td></tr>
+<tr><td><a href="https://github.com/sankalpmax/fooddash/actions/runs/42027701272" target="_blank" rel="noopener">Failed run</a></td><td>The same symptom: the user service on port 3001 failed its health check</td></tr>
+<tr><td><a href="https://github.com/sankalpmax/fooddash/actions/runs/42033184779" target="_blank" rel="noopener">Failed run</a></td><td>SSM reported failure, but the retrieved log does not show the underlying command error</td></tr>
+<tr><td><a href="https://github.com/sankalpmax/fooddash/actions/runs/42037217073" target="_blank" rel="noopener">Failed run</a></td><td>The same symptom: the user service on port 3001 failed its health check</td></tr>
+<tr><td><a href="https://github.com/sankalpmax/fooddash/actions/runs/42039399611" target="_blank" rel="noopener">Successful run</a></td><td>The workflow completed, including the deployment health checks</td></tr>
+</tbody></table></div>
+<p class="note">The failures were at deployment time, not in the Docker build or the image push. The logs do not record the exact cause or the change that fixed it, so I don’t state one here.</p>
+<h3 class="sub3">Limits and next improvements</h3>
+<ul class="exp">
+<li>The workflow has no unit, integration, or frontend test jobs and no lint step</li>
+<li>Trivy findings do not block publishing, so the next step is a severity threshold that fails the build</li>
+<li>There is no approval gate or dev-to-prod promotion in this workflow</li>
+<li>AWS access uses stored keys, and moving to OIDC role assumption would remove them</li>
+</ul>
+<h3 class="sub3">Design notes</h3>
+<details><summary>Application delivery path</summary><p>A change pushed to GitHub starts a GitHub Actions workflow that builds the service images and runs a Trivy scan. The scan reports findings but does not fail the build, so it is informational only. Images go to Amazon ECR, then AWS Systems Manager deploys them to the AWS sandbox, and a health check follows. A later run completed with the health checks passing.</p></details>
+<details><summary>Infrastructure path and why two repositories</summary><p>Terraform lives in its own repository so infrastructure changes are reviewed and applied separately from application releases. The Mumbai root keeps state in S3 with a native lockfile. The Hyderabad root uses local state by default, which is fine for learning but not for a team. There are no reusable modules yet.</p></details>
+<details><summary>Runtime and what the audit found</summary><p>The read-only audit compared AWS inventory, Terraform source and state. Where it looked, it saw one running EC2 instance and a stopped RDS instance. It did not confirm the load balancer, the origin behind CloudFront, extra web servers, or a read replica, so those appear as “to verify” or “target design” rather than as built.</p></details>
+<details><summary>My next steps</summary><ul><li>Document the root cause of the earlier health-check failures</li><li>Add automated tests to the workflow</li><li>Make the Trivy scan block on high-severity findings</li><li>Add an approval step before deployment</li><li>Move Hyderabad to remote state and split the Terraform into modules</li></ul></details>
+<h3 class="sub3">What I built</h3>
+<div class="tbl"><table>
+<thead><tr><th>Area</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>Frontend with user, restaurant, and order services</td><td><span class="tag">In the repository</span></td></tr>
+<tr><td>Docker and Docker Compose setup</td><td><span class="tag">In the repository</span></td></tr>
+<tr><td>Order-status API allows forward-only transitions</td><td><span class="tag">Implemented</span></td></tr>
+<tr><td>Terraform in Mumbai (<code>prod-terraform/</code>) with S3 backend and native lockfile</td><td><span class="tag">In source</span></td></tr>
+<tr><td>Terraform in Hyderabad (<code>terraform/vpc/</code>) with local state by default</td><td><span class="tag">In source</span></td></tr>
+<tr><td>CI/CD workflow: GitHub Actions, Docker image builds, Trivy scan, Amazon ECR, SSM deployment</td><td><span class="tag">In the repository</span></td></tr>
+<tr><td>Read-only audit comparing AWS inventory, Terraform source, and Terraform state</td><td><span class="tag">Completed</span></td></tr>
+</tbody></table></div>
+<p class="note">The Mumbai folder is named <code>prod-terraform/</code>, but FoodDash is a personal learning project and that name does not mean customer production.</p>
+
+<h3 class="sub3">What the audit taught me</h3>
+<p class="lead">I ran a read-only audit comparing AWS inventory, Terraform source, and Terraform state. It found some matching resources, some unresolved differences, and some IAM permission gaps. The audit changed nothing in AWS. Terraform source alone doesn’t prove a resource exists, so I check all three.</p>
+
+<div class="links">
+<a href="https://d19dlk7yc7td0b.cloudfront.net/" target="_blank" rel="noopener">Application demo</a>
+<a href="https://github.com/sankalpmax/fooddash" target="_blank" rel="noopener">Application repository</a>
+<a href="https://github.com/sankalpmax/fooddash-infra" target="_blank" rel="noopener">Infrastructure repository</a>
+</div>
+</article>
+</div></section>
+
+<section id="certs"><div class="wrap">
+<h2>Certifications</h2>
+<a class="badge" href="https://www.credly.com/badges/2aa03d37-ae47-41ff-b9b2-d06bc5931891" target="_blank" rel="noopener"><span class="seal" aria-hidden="true">SA</span><span><b>AWS Certified Solutions Architect – Associate</b><span class="m">Issued by Amazon Web Services Training and Certification</span><u>Verify on Credly</u></span></a>
+</div></section>
+
+<section id="contact"><div class="wrap">
+<h2>Contact</h2>
+<ul class="clist">
+<li>Email: <a href="mailto:sankalparava619@gmail.com">sankalparava619@gmail.com</a></li>
+<li>Phone: <a href="tel:+918310276507">+91 83102 76507</a></li>
+</ul>
+<a class="btn" href="https://www.linkedin.com/in/sankalp-arava-152080170/" target="_blank" rel="noopener">LinkedIn</a>
+<a class="btn ghost" href="https://github.com/sankalpmax" target="_blank" rel="noopener">GitHub</a>
+</div></section>
+</main>
+<footer><div class="wrap">© 2026 Sankalp Arava</div></footer>
+<script>
+(function(){
+var el=document.getElementById('typed');
+if(!el||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+var words=['Cloud Engineer','DevOps Engineer'],w=0,i=0,del=false;
+el.setAttribute('aria-label','Cloud Engineer and DevOps Engineer');
+function tick(){
+var word=words[w];
+el.textContent=word.slice(0,i);
+var d=del?45:90;
+if(!del&&i===word.length){del=true;d=1600;}
+else if(del&&i===0){del=false;w=(w+1)%words.length;d=400;}
+else{i+=del?-1:1;}
+setTimeout(tick,d);
+}
+el.textContent='';tick();
+})();
+</script>
+</body>
+</html>
